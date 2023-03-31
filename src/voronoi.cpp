@@ -51,18 +51,23 @@ pair<float, float> findCentroid(vector<pair<float, float>>& polygon) {
 
 void Voronoi::printVoronoi()
 {
+	pair<float, float> centroid;
 	cout << "\nImage height = " << height << "\tImage width = " << width << endl;
+	cout << "{\"points\":[";
 	for(int i=0; i <width; i++)
 	{
 		for(int j=0; j< height; j++)
 		{
-			//findCentroid(voronoiPts[i][j]);
-			cout << "center point " << findCentroid(voronoiPts[i][j]);
-			//cout<< "voronoi[" << i << "][" << j << "] = " << voronoiPts[i][j] << ",Pixel:";
+			centroid = findCentroid(voronoiPts[i][j]);
+			cout << "{\"x\": " << centroid.first << ", \"y\": " << centroid.second << "}";
 			//(*imageRef)(i,j)->print(cout);
+			if (i * j < width * height - 1) {
+				cout << ",";
+			}
 			cout << "\n";
 		}
 	}
+	cout << "]}";
 }
 
 /*
