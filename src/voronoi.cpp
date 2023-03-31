@@ -1,6 +1,7 @@
 #include "voronoi.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -50,25 +51,48 @@ pair<float, float> findCentroid(vector<pair<float, float>>& polygon) {
 	return make_pair(xcm, ycm);
 }
 
+string pairToJson(pair<float, float> pair) {
+	ostringstream json;
+	json << "{\"x\":" << pair.first << ",\"y\":" << pair.second << "}";
+	return json.str();
+}
+
+string polyToJson(const vector<pair<float, float>>& polygon) {
+	// Format the polygon as a JSON array of objects
+	ostringstream json;
+	json << "\"vertices\":[" << endl;
+	for (int i = 0; i < polygon.size(); i++) {
+		json << pairToJson(polygon[i]);
+		if (i != polygon.size() - 1) json << ",";
+		json << endl;
+	}
+	json << "]";
+	return json.str();
+}
+
 void Voronoi::printVoronoi(string json_path)
 {
 	Pixel* pixel;
 	pair<float, float> centroid;
+	string vertices;
 	ofstream outfile(json_path);
-	outfile << "{\"points\":[";
+	outfile << "{\"polygons\":[" << endl;
 	int lastrow = (width - 1) * (height - 1) - 1;
 
-	for(int i=0; i <width; i++)
+	for(int i=0; i<width; i++)
 	{
-		for(int j=0; j< height; j++)
+		for(int j=0; j<height; j++)
 		{
 			pixel = (*imageRef)(i, j);
 			centroid = findCentroid(voronoiPts[i][j]);
-			outfile << "{\"x\": " << centroid.first << ", \"y\": " << centroid.second << ", \"c\":\"" << pixel->getHexColor() << "\"}";
-			if (i * j < lastrow) {
-				outfile << ",";
-			}
-			outfile << "\n";
+			vertices = polyToJson(voronoiPts[i][j]);
+			
+			outfile << "{" << vertices << "," << endl;
+			outfile << "\"centroid\":" << pairToJson(centroid) << "," << endl;
+			outfile << "\"color\":\"" << pixel->getHexColor() << "\"" << endl;
+			outfile << "}";
+			if (i * j < lastrow) outfile << ",";
+			outfile << endl;
 		}
 	}
 	outfile << "]}";
