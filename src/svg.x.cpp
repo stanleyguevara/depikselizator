@@ -137,14 +137,14 @@ int main(int argc, char** argv)
 
 	////Create B-Splines on the end points of Voronoi edges.
 	Spline curves(&diagram);
-	gCurves = &curves;
-	curves.extractActiveEdges();
-	curves.calculateGraph();
+	//gCurves = &curves;
+	//curves.extractActiveEdges();
+	//curves.calculateGraph();
 
 	//// Check the graph here
 
 	//// mainOutLine contains all the outline edges where we will fit the b-splines
-	mainOutLine = curves.printGraph();
+	//mainOutLine = curves.printGraph();
 	////std::cout << mainOutLine << endl;
 	//Optimize B-Splines
 
