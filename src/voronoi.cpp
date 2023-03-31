@@ -1,5 +1,6 @@
 #include "voronoi.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -52,22 +53,23 @@ pair<float, float> findCentroid(vector<pair<float, float>>& polygon) {
 void Voronoi::printVoronoi()
 {
 	pair<float, float> centroid;
-	cout << "\nImage height = " << height << "\tImage width = " << width << endl;
-	cout << "{\"points\":[";
+	ofstream outfile("test/centroids.json");
+	outfile << "{\"points\":[";
 	for(int i=0; i <width; i++)
 	{
 		for(int j=0; j< height; j++)
 		{
 			centroid = findCentroid(voronoiPts[i][j]);
-			cout << "{\"x\": " << centroid.first << ", \"y\": " << centroid.second << "}";
+			outfile << "{\"x\": " << centroid.first << ", \"y\": " << centroid.second << "}";
 			//(*imageRef)(i,j)->print(cout);
-			if (i * j < width * height - 1) {
-				cout << ",";
+			if (i * j < (width - 1) * (height - 1) - 1) {
+				outfile << ",";
 			}
-			cout << "\n";
+			outfile << "\n";
 		}
 	}
-	cout << "]}";
+	outfile << "]}";
+	outfile.close();
 }
 
 /*
