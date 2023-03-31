@@ -133,7 +133,7 @@ int main(int argc, char** argv)
 	Voronoi diagram(inputImage);
 	gDiagram = &diagram;
 	diagram.createDiagram(similarity);
-	//diagram.printVoronoi();
+	diagram.printVoronoi();
 
 	////Create B-Splines on the end points of Voronoi edges.
 	Spline curves(&diagram);

@@ -1,6 +1,8 @@
 #include "voronoi.h"
 #include <iostream>
 
+using namespace std;
+
 int height, width;
 
 void Voronoi::createDiagram(Graph& graph)
@@ -13,7 +15,7 @@ void Voronoi::createDiagram(Graph& graph)
 
 	for(int i = 0; i < w; i++)
 	{
-		std::vector<std::vector<Point>> v2(h);
+		vector<vector<Point>> v2(h);
 		voronoiPts.push_back(v2);
 	}
 	createRegions(graph);
@@ -25,20 +27,42 @@ bool Voronoi::onBoundary(Point p)
 	return p.first == 0 || p.first == width || p.second == 0 || p.second == height;
 }
 
+pair<float, float> findCentroid(vector<pair<float, float>>& polygon) {
+	float xsum = 0;
+	float ysum = 0;
+	float area = 0;
+
+	for (int i = 0; i < polygon.size(); i++) {
+		int j = (i + 1) % polygon.size(); // Next vertex index
+		float crossProduct = (polygon[i].first * polygon[j].second) - (polygon[j].first * polygon[i].second);
+
+		xsum += (polygon[i].first + polygon[j].first) * crossProduct;
+		ysum += (polygon[i].second + polygon[j].second) * crossProduct;
+		area += crossProduct;
+	}
+
+	area /= 2;
+
+	float xcm = xsum / (6 * area);
+	float ycm = ysum / (6 * area);
+
+	return make_pair(xcm, ycm);
+}
+
 void Voronoi::printVoronoi()
 {
-
-	std::cout << "\nImage height = " << height << "\tImage width = " << width << std::endl;
+	cout << "\nImage height = " << height << "\tImage width = " << width << endl;
 	for(int i=0; i <width; i++)
 	{
 		for(int j=0; j< height; j++)
 		{
-			std::cout<< "voronoi[" << i << "][" << j << "] = " << voronoiPts[i][j] << ",Pixel:";
-			(*imageRef)(i,j)->print(std::cout);
-			std::cout << "\n";
+			//findCentroid(voronoiPts[i][j]);
+			cout << "center point " << findCentroid(voronoiPts[i][j]);
+			//cout<< "voronoi[" << i << "][" << j << "] = " << voronoiPts[i][j] << ",Pixel:";
+			//(*imageRef)(i,j)->print(cout);
+			cout << "\n";
 		}
 	}
-
 }
 
 /*
@@ -68,13 +92,13 @@ void Voronoi::collapseValence2()
 	{
 		for(int y=0; y< height; y++)
 		{
-			std::vector<Point> temp;
+			vector<Point> temp;
 			for(int i = 0 ; i < voronoiPts[x][y].size(); i++)
 			{
 				if(valency[voronoiPts[x][y][i]] != 4 || onBoundary(voronoiPts[x][y][i])) temp.push_back(voronoiPts[x][y][i]);
 			}
 			voronoiPts[x][y].clear();
-			voronoiPts[x][y] = std::vector<Point>(temp);
+			voronoiPts[x][y] = vector<Point>(temp);
 		}
 	}
 }
@@ -162,7 +186,7 @@ void Voronoi::createRegions(Graph& graph)
 	}
 }
 
-std::vector<Point> Voronoi::operator()(int i,int j)
+vector<Point> Voronoi::operator()(int i,int j)
 {
 	return voronoiPts[i][j];
 }
