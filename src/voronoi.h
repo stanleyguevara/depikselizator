@@ -30,7 +30,7 @@ class Voronoi
 		void createRegions(Graph& graph);
 
 		//Debugging function
-		void printVoronoi();
+		void printVoronoi(std::string json_path);
 
 		//Collapsing valence 2 nodes for smoother voronoi
 		void collapseValence2();

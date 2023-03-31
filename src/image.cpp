@@ -3,6 +3,9 @@
 #include "common.h"
 
 #include <map>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
 
 bool ColorYUV::is_similar(const ColorYUV& c) const
 {
@@ -23,11 +26,24 @@ ColorYUV Color::toYUV() const {
     return ColorYUV{ y, u, v };
 }
 
+std::string Color::toHex() const {
+    std::stringstream stream;
+    stream << std::setfill('0') << std::setw(2) << std::hex << R;
+    stream << std::setfill('0') << std::setw(2) << std::hex << G;
+    stream << std::setfill('0') << std::setw(2) << std::hex << B;
+    return stream.str();
+}
+
 Pixel::Pixel(Image* const image_ref, unsigned int R, unsigned int G, unsigned int B, int x, int y)
 {
     this->image_ref = image_ref;
     this->m_color = Color{ R, G, B };
     this->position = std::make_pair(x,y);
+}
+
+std::string Pixel::getHexColor()
+{
+    return m_color.toHex();
 }
 
 void Pixel::print(std::ostream& out)

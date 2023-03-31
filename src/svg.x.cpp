@@ -109,12 +109,13 @@ void drawImage(svg::Document &doc)
 
 int main(int argc, char** argv)
 {
-	if(argc < 3)
+	if(argc < 4)
 	{
-		std::cout << "Usage: " << argv[0] << " <<image_path>> <<output_path>>\n";
+		std::cout << "Usage: " << argv[0] << " <<image_path>> <<output_path>> <<json_path>>\n";
 		return 1;
 	}
 	std::string output_path = std::string(argv[2]);
+	std::string json_path = std::string(argv[3]);
 
 	//Image contains Pixel Data
 	Image inputImage = Image(string(argv[1]));
@@ -133,7 +134,7 @@ int main(int argc, char** argv)
 	Voronoi diagram(inputImage);
 	gDiagram = &diagram;
 	diagram.createDiagram(similarity);
-	diagram.printVoronoi();
+	diagram.printVoronoi(json_path);
 
 	////Create B-Splines on the end points of Voronoi edges.
 	Spline curves(&diagram);

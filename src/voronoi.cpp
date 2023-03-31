@@ -50,19 +50,22 @@ pair<float, float> findCentroid(vector<pair<float, float>>& polygon) {
 	return make_pair(xcm, ycm);
 }
 
-void Voronoi::printVoronoi()
+void Voronoi::printVoronoi(string json_path)
 {
+	Pixel* pixel;
 	pair<float, float> centroid;
-	ofstream outfile("test/centroids.json");
+	ofstream outfile(json_path);
 	outfile << "{\"points\":[";
+	int lastrow = (width - 1) * (height - 1) - 1;
+
 	for(int i=0; i <width; i++)
 	{
 		for(int j=0; j< height; j++)
 		{
+			pixel = (*imageRef)(i, j);
 			centroid = findCentroid(voronoiPts[i][j]);
-			outfile << "{\"x\": " << centroid.first << ", \"y\": " << centroid.second << "}";
-			//(*imageRef)(i,j)->print(cout);
-			if (i * j < (width - 1) * (height - 1) - 1) {
+			outfile << "{\"x\": " << centroid.first << ", \"y\": " << centroid.second << ", \"c\":\"" << pixel->getHexColor() << "\"}";
+			if (i * j < lastrow) {
 				outfile << ",";
 			}
 			outfile << "\n";

@@ -20,6 +20,7 @@ struct Color {
     unsigned int R;
     unsigned int G;
     unsigned int B;
+    std::string toHex() const;
     ColorYUV toYUV() const;
     operator ColorYUV() const { return this->toYUV(); };
     bool is_similar(const Color& c) const { return this->toYUV().is_similar((ColorYUV)c); };
@@ -87,6 +88,7 @@ public:
 
     //for pretty printing pixels
     void print(std::ostream& out);
+    std::string getHexColor();
 };
 
 #endif
