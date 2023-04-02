@@ -61,9 +61,9 @@ string polyToJson(const vector<pair<float, float>>& polygon) {
 	// Format the polygon as a JSON array of objects
 	ostringstream json;
 	json << "\"vertices\":[" << endl;
-	for (int i = 0; i < polygon.size(); i++) {
+	for (int i = polygon.size()-1; i>=0; i--) {
 		json << pairToJson(polygon[i]);
-		if (i != polygon.size() - 1) json << ",";
+		if (i != 0) json << ",";
 		json << endl;
 	}
 	json << "]";
@@ -76,12 +76,12 @@ void Voronoi::printVoronoi(string json_path)
 	pair<float, float> centroid;
 	string vertices;
 	ofstream outfile(json_path);
-	outfile << "{\"polygons\":[" << endl;
-	int lastrow = (width - 1) * (height - 1) - 1;
+	outfile << "{\"width\":" << width << ",\"height\":" << height << "," << endl;
+	outfile << "\"polygons\":[" << endl;
 
 	for(int i=0; i<width; i++)
 	{
-		for(int j=0; j<height; j++)
+		for(int j=height-1; j>=0; j--)
 		{
 			pixel = (*imageRef)(i, j);
 			centroid = findCentroid(voronoiPts[i][j]);
@@ -91,7 +91,7 @@ void Voronoi::printVoronoi(string json_path)
 			outfile << "\"centroid\":" << pairToJson(centroid) << "," << endl;
 			outfile << "\"color\":\"" << pixel->getHexColor() << "\"" << endl;
 			outfile << "}";
-			if (i * j < lastrow) outfile << ",";
+			if (i != width - 1 || j != 0) outfile << ",";
 			outfile << endl;
 		}
 	}
