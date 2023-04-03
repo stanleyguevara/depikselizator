@@ -21,7 +21,7 @@ bool ColorYUV::is_similar_2(const ColorYUV& c, double softness) const
 // Converting to YUV as per Wikipedia definitions
 ColorYUV Color::toYUV() const {
     double y = 0.299 * R + 0.587 * G + 0.114 * B;
-    double u = 0.492 * (B - y);
+    double u = 0.493 * (B - y);
     double v = 0.877 * (R - y);
     return ColorYUV{ y, u, v };
 }
