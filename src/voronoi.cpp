@@ -81,7 +81,7 @@ void Voronoi::printVoronoi(string json_path)
 
 	for(int i=0; i<width; i++)
 	{
-		for(int j=height-1; j>=0; j--)
+		for(int j=0; j<height; j++)
 		{
 			pixel = (*imageRef)(i, j);
 			centroid = findCentroid(voronoiPts[i][j]);
@@ -91,7 +91,7 @@ void Voronoi::printVoronoi(string json_path)
 			outfile << "\"centroid\":" << pairToJson(centroid) << "," << endl;
 			outfile << "\"color\":\"" << pixel->getHexColor() << "\"" << endl;
 			outfile << "}";
-			if (i != width - 1 || j != 0) outfile << ",";
+			if (i != width - 1 || j != height - 1) outfile << ",";
 			outfile << endl;
 		}
 	}
