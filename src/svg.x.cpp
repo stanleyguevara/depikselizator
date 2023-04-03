@@ -109,16 +109,20 @@ void drawImage(svg::Document &doc)
 
 int main(int argc, char** argv)
 {
-	if(argc < 4)
-	{
-		std::cout << "Usage: " << argv[0] << " <<image_path>> <<output_path>> <<json_path>>\n";
+	if (argc > 2) {
+		std::cout << "Usage: " << argv[0] << " <<bmp filename without extension>>" << endl;
 		return 1;
 	}
-	std::string output_path = std::string(argv[2]);
-	std::string json_path = std::string(argv[3]);
+	if (argc == 1) {
+		argv[1] = "d2";	// To zmieniaj jak chcesz szybko testować
+		std::cout << "Missing arguments, debug file: " << argv[1] << ".bmp" << endl;
+	}
+	
+	std::string output_path = std::string(argv[1]) + ".svg";
+	std::string json_path = std::string(argv[1]) + ".json";
 
 	//Image contains Pixel Data
-	Image inputImage = Image(string(argv[1]));
+	Image inputImage = Image(string(argv[1]) + ".bmp");
 	gImage = &inputImage;
 
 	////Create Similarity Graph
