@@ -2,6 +2,9 @@
 #include <stack>
 #include <utility>
 
+#include <iostream>
+#include <sstream>
+
 //Checks if the requested pixel is in range of the image
 bool isValid(int x,int y, int w, int h)
 {
@@ -253,6 +256,144 @@ void Graph::sparse_pixels_heuristic(IntPoint ip)
 	}
 }
 
+// Define a mapping from Direction values to their corresponding constant names
+//const std::map<Direction, std::string> DIRECTION_NAMES = {
+//	{TOP, "↑,"},
+//	{TOP_RIGHT, "↗,"},
+//	{TOP_LEFT, "↖,"},
+//	{LEFT, "←,"},
+//	{RIGHT, "→,"},
+//	{BOTTOM, "↓,"},
+//	{BOTTOM_RIGHT, "↘,"},
+//	{BOTTOM_LEFT, "↙,"}
+//};
+
+const std::map<Direction, std::string> DIRECTION_ICONS = {
+	{TOP, "·"},
+	{TOP_RIGHT, "·"},
+	{TOP_LEFT, "·"},
+	{LEFT, "·"},
+	{RIGHT, "·"},
+	{BOTTOM, "·"},
+	{BOTTOM_RIGHT, "·"},
+	{BOTTOM_LEFT, "·"}
+};
+
+const std::map<Direction, std::string> DIRECTION_NAMES = {
+	{TOP, "TOP"},
+	{TOP_RIGHT, "TOP_RIGHT"},
+	{TOP_LEFT, "TOP_LEFT"},
+	{LEFT, "LEFT"},
+	{RIGHT, "RIGHT"},
+	{BOTTOM, "BOTTOM"},
+	{BOTTOM_RIGHT, "BOTTOM_RIGHT"},
+	{BOTTOM_LEFT, "BOTTOM_LEFT"}
+};
+
+// Define a helper function to convert a Direction value to its constant name
+std::string directionToString(Direction dir) {
+	return DIRECTION_NAMES.at(dir);
+}
+
+std::string intToOneCharString(int num) {
+	if (num >= 0 && num <= 9) {
+		return std::to_string(num);
+	}
+	else {
+		return "s";
+	}
+}
+
+std::string intToString(int num) {
+	std::stringstream ss;
+	if (num == 0) {
+		ss << "░░";
+	} else if (num > 0 && num <= 9) {
+		ss << "0" << num;
+	} else {
+		ss << num;
+	}
+	return ss.str();
+}
+
+void printNonZeroWeights(const std::vector<std::vector<std::vector<int>>>& weights) {
+	for (size_t x = 0; x < weights.size(); ++x) {
+		for (size_t y = 0; y < weights[x].size(); ++y) {
+			for (size_t dir = 0; dir < weights[x][y].size(); ++dir) {
+				int weight = weights[x][y][dir];
+				if (weight != 0) {
+					Direction direction = static_cast<Direction>(dir);
+					std::string directionName = DIRECTION_NAMES.at(direction);
+					std::cout << "x=" << x << ", y=" << y << ", direction=" << directionName << std::endl;
+				}
+			}
+		}
+	}
+}
+
+void printEdges2(
+	const std::set<std::pair<IntPoint, Direction>>& edges,
+	const std::vector<std::vector<std::vector<int>>>& weights,
+	int width, int height) {
+	// Initialize a 2D vector to hold the cells for each pixel in the image
+	std::vector<std::vector<std::string>> cellGrid(height * 3, std::vector<std::string>(width * 3, "  "));
+
+	// Populate the cell grid with the x and edge arrows
+	for (const auto& edge : edges) {
+		IntPoint point = edge.first;
+		Direction dir = edge.second;
+		int x = point.first;
+		int y = point.second;
+
+		// Determine the grid coordinates corresponding to the point
+		int row = y;
+		int col = x;
+
+		// Determine the cell coordinates for the middle of the 3x3 grid
+		int midRow = row * 3 + 1;
+		int midCol = col * 3 + 1;
+
+		// Set the middle cell to "x"
+		cellGrid[midRow][midCol] = "▒▒";
+
+		//std::cout << "weights[" << x << "][" << y << "][TOP]" << weights[x][y][TOP] << std::endl;
+
+		// Set the edge arrow cells if the edge exists
+		if (edges.find({ point, TOP }) != edges.end()) {
+			cellGrid[midRow - 1][midCol] = intToString(weights[x][y][TOP]);
+		}
+		if (edges.find({ point, TOP_RIGHT }) != edges.end()) {
+			cellGrid[midRow - 1][midCol + 1] = intToString(weights[x][y][TOP_RIGHT]);
+		}
+		if (edges.find({ point, TOP_LEFT }) != edges.end()) {
+			cellGrid[midRow - 1][midCol - 1] = intToString(weights[x][y][TOP_LEFT]);
+		}
+		if (edges.find({ point, LEFT }) != edges.end()) {
+			cellGrid[midRow][midCol - 1] = intToString(weights[x][y][LEFT]);
+		}
+		if (edges.find({ point, RIGHT }) != edges.end()) {
+			cellGrid[midRow][midCol + 1] = intToString(weights[x][y][RIGHT]);
+		}
+		if (edges.find({ point, BOTTOM }) != edges.end()) {
+			cellGrid[midRow + 1][midCol] = intToString(weights[x][y][BOTTOM]);
+		}
+		if (edges.find({ point, BOTTOM_RIGHT }) != edges.end()) {
+			cellGrid[midRow + 1][midCol + 1] = intToString(weights[x][y][BOTTOM_RIGHT]);
+		}
+		if (edges.find({ point, BOTTOM_LEFT }) != edges.end()) {
+			cellGrid[midRow + 1][midCol - 1] = intToString(weights[x][y][BOTTOM_LEFT]);
+		}
+	}
+
+	// Print the cell grid to std::cout
+	for (int row = 0; row < height * 3; row++) {
+		for (int col = 0; col < width * 3; col++) {
+			std::cout << cellGrid[row][col];
+		}
+		std::cout << std::endl;
+	}
+}
+
 void Graph::planarize()
 {
 	//Remove Crosses for obvious planarization
@@ -289,9 +430,9 @@ void Graph::planarize()
 			}
 			if(this->weights[topLeft->X()][topLeft->Y()][BOTTOM_RIGHT] >= this->weights[topRight->X()][topRight->Y()][BOTTOM_LEFT])
 			{
-				delete_edge(topRight, BOTTOM_LEFT);
-				delete_edge(bottomLeft, TOP_RIGHT);
-			}
+					delete_edge(topRight, BOTTOM_LEFT);
+					delete_edge(bottomLeft, TOP_RIGHT);
+				}
 		}
 	}
 }
