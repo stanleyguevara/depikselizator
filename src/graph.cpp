@@ -438,47 +438,4 @@ void Graph::planarize()
 		}
 	}
 	printEdges2(edges, weights, image->getWidth(), image->getHeight());
-
-	for (int i = 0; i < this->image->getWidth() - 1; i++) for (int j = 0; j < this->image->getHeight() - 1; j++)
-	{
-		Pixel* topLeft = (*image)(i, j);
-		Pixel* topRight = (*image).getAdjacent(i, j, RIGHT);
-		Pixel* bottomLeft = (*image).getAdjacent(i, j, BOTTOM);
-		Pixel* bottomRight = (*image).getAdjacent(i, j, BOTTOM_RIGHT);
-		if (!(topLeft && topRight && bottomLeft && bottomRight)) continue;
-		if (edge(topLeft, BOTTOM_RIGHT) && edge(topRight, BOTTOM_LEFT))
-		{
-			//Edges are crossing and the pixels are dissimilar, need to discard atleast one.
-			//Check if there are horizontal/vertical connections
-			if (edge(topLeft, BOTTOM)) continue;
-			if (edge(topLeft, RIGHT)) continue;
-			if (edge(bottomRight, TOP)) continue;
-			if (edge(bottomRight, LEFT)) continue;
-
-			//Remove the lighter edge. And both if they are equal
-			int TL_BR = this->weights[topLeft->X()][topLeft->Y()][BOTTOM_RIGHT];
-			int TR_BL = this->weights[topRight->X()][topRight->Y()][BOTTOM_LEFT];
-			int BR_TL = this->weights[bottomRight->X()][bottomRight->Y()][TOP_LEFT];
-			int BL_TR = this->weights[bottomLeft->X()][bottomLeft->Y()][TOP_RIGHT];
-			if (TL_BR + BR_TL == TR_BL + BL_TR) {
-				delete_edge(topLeft, BOTTOM_RIGHT);
-				delete_edge(bottomRight, TOP_LEFT);
-				delete_edge(topRight, BOTTOM_LEFT);
-				delete_edge(bottomLeft, TOP_RIGHT);
-			}
-			else {
-				if (TL_BR + BR_TL > TR_BL + BL_TR) {
-					delete_edge(topRight, BOTTOM_LEFT);
-					delete_edge(bottomLeft, TOP_RIGHT);
-				}
-				else {
-					delete_edge(topLeft, BOTTOM_RIGHT);
-					delete_edge(bottomRight, TOP_LEFT);
-				}
-			}
-		}
-	}
-	std::cout << "After..." << std::endl;
-	printEdges2(edges, weights, image->getWidth(), image->getHeight());
-	//printNonZeroWeights(weights);
 }
