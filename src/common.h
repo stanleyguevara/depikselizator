@@ -41,14 +41,14 @@ enum Direction {
 
 const int direction[8][2] =
 {
-	{-1,-1},
-	{-1,0},
-	{-1,1},
-	{0,-1},
-	{0,1},
-	{1,-1},
-	{1,0},
-	{1,1}
+	{-1,-1},	// TOP_LEFT
+	{0,-1},		// TOP
+	{1,-1},		// TOP_RIGHT
+	{-1,0},		// LEFT
+	{1,0},		// RIGHT
+	{-1,1},		// BOTTOM_LEFT
+	{0,1},		// BOTTOM
+	{1,1}		// BOTTOM_RIGHT
 };
 
 //Pretty print C++ structures
@@ -88,13 +88,13 @@ std::ostream& operator<<(std::ostream& out, const std::map<K,V>& v)
 template<class K>
 std::ostream& operator<<(std::ostream& out, const std::set<K>& s)
 {
-	out << "{";
+	out << "[";
 	for(auto it = s.begin(); it != s.end(); it ++)
 	{
 		out << *it;
 		if(next(it) != s.end()) out << ", ";
 	}
-	out << "}";
+	out << "]";
 	return out;
 }
 
