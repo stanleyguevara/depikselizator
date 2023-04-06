@@ -114,7 +114,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	if (argc == 1) {
-		argv[1] = "d2";	// To zmieniaj jak chcesz szybko testować
+		argv[1] = "boo";	// To zmieniaj jak chcesz szybko testować
 		std::cout << "Missing arguments, debug file: " << argv[1] << ".bmp" << endl;
 	}
 	
